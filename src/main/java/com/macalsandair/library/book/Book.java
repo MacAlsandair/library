@@ -1,4 +1,4 @@
-package com.macalsandair.filmlibrary.book;
+package com.macalsandair.library.book;
 
 import java.io.Serializable;
 import java.util.Objects;

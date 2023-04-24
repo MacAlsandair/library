@@ -1,4 +1,4 @@
-package com.macalsandair.filmlibrary;
+package com.macalsandair.library;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
