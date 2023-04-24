@@ -1,5 +1,6 @@
 package com.macalsandair.filmlibrary.book;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -11,7 +12,7 @@ import jakarta.persistence.Table;
 
 @Entity(name = "Book")
 @Table(name = "book")
-public class Book {
+public class Book implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
