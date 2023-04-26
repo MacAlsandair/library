@@ -17,12 +17,12 @@ public class Book implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(nullable = false, updatable = false)
-	Long id;
+	private Long id;
 	
-	String name;
-	String author;
-	short yearOfPublication;
-	String genre;
+	private String name;
+	private String author;
+	private short yearOfPublication;
+	private String genre;
 	
 	public Book() {
 		super();

@@ -1,5 +1,10 @@
 package com.macalsandair.library.book;
 
-public class BookService {
+import org.springframework.stereotype.Service;
 
+@Service
+public class BookService {
+	
+	@Autowired
+	private
 }

@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookController {
 	
 	@Autowired
-	BookRepository bookRepository;
+	private BookRepository bookRepository;
+	@Autowired
+	private BookService bookService;
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<Book>> getAllBooks() {
