@@ -79,6 +79,29 @@ public class SecurityConfiguration {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+    
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(this.key).build();
+    }
+
+    @Bean
+    JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(this.key).privateKey(this.priv).build();
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
+
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // Remove the SCOPE_ prefix
+        grantedAuthoritiesConverter.setAuthorityPrefix("");
+
+        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
+    }
 	
 	
 
