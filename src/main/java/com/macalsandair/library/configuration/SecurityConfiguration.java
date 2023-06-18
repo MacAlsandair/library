@@ -16,6 +16,9 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
+
+import ch.martinelli.demo.backend.auth.Roles;
+
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -61,6 +64,16 @@ public class SecurityConfiguration {
 					);
 		return http.build();
 	}
+	
+    @Bean
+    UserDetailsService users() {
+        return new InMemoryUserDetailsManager(
+                User.withUsername("user")
+                        .password(passwordEncoder().encode("pass"))
+                        .roles(Roles.USER)
+                        .build()
+        );
+    }
 	
 	
 
