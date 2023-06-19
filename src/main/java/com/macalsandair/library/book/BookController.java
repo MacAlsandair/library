@@ -15,8 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.macalsandair.library.auth.Roles;
+
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 
+@RolesAllowed(Roles.USER)
 @RestController
 @RequestMapping("/api/book")
 public class BookController {

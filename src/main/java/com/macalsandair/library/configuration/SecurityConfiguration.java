@@ -50,6 +50,8 @@ public class SecurityConfiguration {
 		this.priv = priv;
 	}
 	
+	
+	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
@@ -61,7 +63,8 @@ public class SecurityConfiguration {
 			.exceptionHandling((exceptions) -> exceptions
 					.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
 					.accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-					);
+					)
+			.cors(Customizer.withDefaults());
 		return http.build();
 	}
 	
