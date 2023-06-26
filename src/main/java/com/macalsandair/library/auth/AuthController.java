@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -30,6 +31,8 @@ public class AuthController {
     private UserDetailsService userDetailsService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public AuthController(JwtEncoder encoder) {
         this.encoder = encoder;
@@ -65,6 +68,31 @@ public class AuthController {
         user.setEnabled(true);
         userRepository.save(user);
         return new ResponseEntity<>("User Registered Successfully!", HttpStatus.CREATED);
+    }
+    
+    @PostMapping("/changePassword")
+    public ResponseEntity<String> changePassword(@RequestBody PasswordChangeDTO passwordChange, Authentication authentication){
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).get();
+        if(passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())){
+            if(!passwordChange.getNewPassword().equals(passwordChange.getOldPassword())){
+                user.setPassword(passwordChange.getNewPassword());
+                userRepository.save(user);
+                return new ResponseEntity<>("Password Changed Successfully!", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("New Password is the same as the old one!", HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("Invalid Old Password!", HttpStatus.BAD_REQUEST);
+        }
+    }
+    
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteUser(Authentication authentication){
+        String username = authentication.getName();
+        User user = userRepository.findByUsername(username).get();
+        userRepository.delete(user);
+        return new ResponseEntity<>("User Deleted Successfully!", HttpStatus.OK);
     }
 
 }
