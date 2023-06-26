@@ -20,7 +20,7 @@ import com.macalsandair.library.auth.Roles;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 
-@RolesAllowed(Roles.USER)
+@RolesAllowed("USER")
 @RestController
 @RequestMapping("/api/book")
 public class BookController {
