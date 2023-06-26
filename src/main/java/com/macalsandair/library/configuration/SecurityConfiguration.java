@@ -12,6 +12,7 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import com.macalsandair.library.auth.Roles;
 import com.macalsandair.library.user.UserDetailsServiceImpl;
+import com.macalsandair.library.user.UserRepository;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -43,17 +44,14 @@ public class SecurityConfiguration {
 	
 	private final RSAPublicKey key;
 	private final RSAPrivateKey priv;
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
 	
 	
     public SecurityConfiguration(
             @Value("${jwt.public.key}") RSAPublicKey key,
-            @Value("${jwt.private.key}") RSAPrivateKey priv,
-            UserDetailsServiceImpl userDetailsServiceImpl
+            @Value("${jwt.private.key}") RSAPrivateKey priv
         ) {
             this.key = key;
             this.priv = priv;
-            this.userDetailsServiceImpl = userDetailsServiceImpl;
         }
 	
 	
@@ -76,7 +74,7 @@ public class SecurityConfiguration {
 	
     @Bean
     public UserDetailsService users() {
-        return userDetailsServiceImpl;
+        return new UserDetailsServiceImpl();
     }   
     
     @Bean
