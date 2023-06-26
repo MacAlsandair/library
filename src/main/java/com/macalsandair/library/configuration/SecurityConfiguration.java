@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.macalsandair.library.auth.Roles;
+import com.macalsandair.library.user.UserDetailsServiceImpl;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -42,13 +43,18 @@ public class SecurityConfiguration {
 	
 	private final RSAPublicKey key;
 	private final RSAPrivateKey priv;
+    private final UserDetailsServiceImpl userDetailsServiceImpl;
 	
 	
-	public SecurityConfiguration(@Value("${jwt.public.key}") RSAPublicKey key, 
-			@Value("${jwt.private.key}") RSAPrivateKey priv) {
-		this.key = key;
-		this.priv = priv;
-	}
+    public SecurityConfiguration(
+            @Value("${jwt.public.key}") RSAPublicKey key,
+            @Value("${jwt.private.key}") RSAPrivateKey priv,
+            UserDetailsServiceImpl userDetailsServiceImpl
+        ) {
+            this.key = key;
+            this.priv = priv;
+            this.userDetailsServiceImpl = userDetailsServiceImpl;
+        }
 	
 	
 	
@@ -69,14 +75,9 @@ public class SecurityConfiguration {
 	}
 	
     @Bean
-    UserDetailsService users() {
-        return new InMemoryUserDetailsManager(
-                User.withUsername("user")
-                        .password(passwordEncoder().encode("pass"))
-                        .roles(Roles.USER)
-                        .build()
-        );
-    }
+    public UserDetailsService users() {
+        return userDetailsServiceImpl;
+    }   
     
     @Bean
     public PasswordEncoder passwordEncoder() {
