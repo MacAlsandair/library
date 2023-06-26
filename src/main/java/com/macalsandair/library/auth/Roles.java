@@ -1,10 +1,24 @@
 package com.macalsandair.library.auth;
 
-public final class Roles {
+import org.springframework.security.core.GrantedAuthority;
 
-    public static final String USER = "USER";
+public enum Roles implements GrantedAuthority {
 
-    private Roles() {
+    USER("USER"),
+    ADMINISTRATOR("ADMINISTRATOR");
+
+    private final String role;
+
+    Roles(String role) {
+        this.role = role;
     }
-	
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
+
+    public String getRole() {
+        return role;
+    }
 }
