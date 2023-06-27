@@ -65,7 +65,7 @@ public class SecurityConfiguration {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests((authorize) -> authorize
-					.requestMatchers("/api/**").permitAll()
+					.requestMatchers("/api/auth/register").permitAll()
 					.anyRequest().authenticated())
 			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
 			.httpBasic(Customizer.withDefaults())
