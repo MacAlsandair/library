@@ -68,7 +68,7 @@ public class AuthController {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(registration.getPassword()));
         user.setEnabled(true);
-        List<Roles> roles = Arrays.asList(Roles.USER, Roles.ADMINISTRATOR);
+        List<Roles> roles = Arrays.asList(Roles.USER);
         user.setRoles(roles);
         userRepository.save(user);
         return new ResponseEntity<>("User Registered Successfully!", HttpStatus.CREATED);
