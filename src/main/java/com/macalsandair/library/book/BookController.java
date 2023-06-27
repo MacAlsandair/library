@@ -6,6 +6,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +23,8 @@ import com.macalsandair.library.auth.Roles;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 
-@RolesAllowed("USER")
+//@RolesAllowed("ADMINISTRATOR")
+//@PreAuthorize("hasRole('ADMINISTRATOR')")
 @RestController
 @RequestMapping("/api/book")
 public class BookController {
@@ -32,6 +36,8 @@ public class BookController {
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<Book>> getAllBooks() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		System.out.println(auth);
 		List<Book> books = bookRepository.findAll();
 		return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
 	}
