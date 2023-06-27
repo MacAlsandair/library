@@ -79,48 +79,6 @@ public class SecurityConfiguration {
 		return http.build();
 	}
 	
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeHttpRequests(a -> a
-//                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-//                .anyRequest().authenticated())
-//            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth"))
-//            .httpBasic(Customizer.withDefaults())
-//            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
-//            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//            .exceptionHandling((exceptions) -> exceptions
-//                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-//                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-//            )
-//            .cors(Customizer.withDefaults());
-//        return http.build();
-//    }
-    
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeHttpRequests(authz -> authz
-//                .requestMatchers(PathRequest.to(Helpers.matchers(HttpMethod.POST, "/api/auth/register"))).permitAll()
-//                .anyRequest().authenticated()
-//            )
-//            .oauth2ResourceServer(oauth2 -> oauth2.jwt())
-//            .cors(c -> {})
-//            .csrf(csrf -> csrf.disable());
-//
-//        return http.build();
-//    }
-//    
-//    class Helpers {
-//        public static Predicate<HttpServletRequest> matchers(HttpMethod method, String antPattern) {
-//            return r -> r.getMethod().equals(method.name()) && new AntPathMatcher().match(antPattern, r.getServletPath());
-//        }
-//    }
-	
-//    @Bean
-//    public UserDetailsService users() {
-//        return new UserDetailsServiceImpl();
-//    }   
     
     @Bean
     public PasswordEncoder passwordEncoder() {
