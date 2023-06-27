@@ -2,13 +2,17 @@ package com.macalsandair.library.configuration;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.function.Predicate;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.util.AntPathMatcher;
 
 import com.macalsandair.library.auth.Roles;
 import com.macalsandair.library.user.UserDetailsServiceImpl;
@@ -20,6 +24,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
@@ -59,8 +64,10 @@ public class SecurityConfiguration {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
-			.authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated())
-			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth"))
+			.authorizeHttpRequests((authorize) -> authorize
+					.requestMatchers("/api/**").permitAll()
+					.anyRequest().authenticated())
+			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
 			.httpBasic(Customizer.withDefaults())
 			.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -72,10 +79,48 @@ public class SecurityConfiguration {
 		return http.build();
 	}
 	
-    @Bean
-    public UserDetailsService users() {
-        return new UserDetailsServiceImpl();
-    }   
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//            .authorizeHttpRequests(a -> a
+//                .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
+//                .anyRequest().authenticated())
+//            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth"))
+//            .httpBasic(Customizer.withDefaults())
+//            .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+//            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//            .exceptionHandling((exceptions) -> exceptions
+//                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
+//                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
+//            )
+//            .cors(Customizer.withDefaults());
+//        return http.build();
+//    }
+    
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//            .authorizeHttpRequests(authz -> authz
+//                .requestMatchers(PathRequest.to(Helpers.matchers(HttpMethod.POST, "/api/auth/register"))).permitAll()
+//                .anyRequest().authenticated()
+//            )
+//            .oauth2ResourceServer(oauth2 -> oauth2.jwt())
+//            .cors(c -> {})
+//            .csrf(csrf -> csrf.disable());
+//
+//        return http.build();
+//    }
+//    
+//    class Helpers {
+//        public static Predicate<HttpServletRequest> matchers(HttpMethod method, String antPattern) {
+//            return r -> r.getMethod().equals(method.name()) && new AntPathMatcher().match(antPattern, r.getServletPath());
+//        }
+//    }
+	
+//    @Bean
+//    public UserDetailsService users() {
+//        return new UserDetailsServiceImpl();
+//    }   
     
     @Bean
     public PasswordEncoder passwordEncoder() {
