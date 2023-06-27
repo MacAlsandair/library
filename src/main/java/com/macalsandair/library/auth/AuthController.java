@@ -1,6 +1,8 @@
 package com.macalsandair.library.auth;
 
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -66,6 +68,8 @@ public class AuthController {
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(registration.getPassword()));
         user.setEnabled(true);
+        List<Roles> roles = Arrays.asList(Roles.USER);
+        user.setRoles(roles);
         userRepository.save(user);
         return new ResponseEntity<>("User Registered Successfully!", HttpStatus.CREATED);
     }
