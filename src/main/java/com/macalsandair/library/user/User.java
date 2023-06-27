@@ -1,14 +1,18 @@
 package com.macalsandair.library.user;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.macalsandair.library.auth.Roles;
+import com.macalsandair.library.book.Book;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +21,8 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -30,6 +36,33 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private boolean enabled;
+    
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "user_favorite_books", 
+               joinColumns = @JoinColumn(name = "user_id"), 
+               inverseJoinColumns = @JoinColumn(name = "book_id"))
+    private Set<Book> favoriteBooks = new HashSet<>();
+    
+    
+    public Set<Book> getFavoriteBooks() {
+        return favoriteBooks;
+    }
+
+    public void setFavoriteBooks(Set<Book> favoriteBooks) {
+        this.favoriteBooks = favoriteBooks;
+    }
+    
+    public void addFavoriteBook(Book book) {
+        this.favoriteBooks.add(book);
+    }
+
+    public void removeFavoriteBook(Book book) {
+        this.favoriteBooks.remove(book);
+    }
+
+    public boolean isFavoriteBook(Book book) {
+        return this.favoriteBooks.contains(book);
+    }
 
     public Long getId() {
 		return id;
