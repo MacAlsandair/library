@@ -1,5 +1,6 @@
 package com.macalsandair.library.user;
 
+import jakarta.persistence.JoinColumn;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -39,8 +40,8 @@ public class User implements UserDetails {
     
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "user_favorite_books", 
-               joinColumns = @JoinColumn(name = "user_id"), 
-               inverseJoinColumns = @JoinColumn(name = "book_id"))
+               joinColumns = {@JoinColumn(name = "user_id")}, 
+               inverseJoinColumns = {@JoinColumn(name = "book_id")})
     private Set<Book> favoriteBooks = new HashSet<>();
     
     
