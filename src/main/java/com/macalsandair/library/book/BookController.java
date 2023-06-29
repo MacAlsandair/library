@@ -36,8 +36,6 @@ public class BookController {
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<Book>> getAllBooks() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println(auth);
 		List<Book> books = bookRepository.findAll();
 		return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
 	}
