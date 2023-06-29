@@ -26,7 +26,7 @@ public class BookRecommendationController {
   private BookRepository bookRepository;
 
   @PostMapping("/add/{id}")
-  public void addFavoriteBook(@PathVariable Long id) {
+  public void addFavoriteBook(@PathVariable("id") Long id) {
     String username = SecurityContextHolder.getContext().getAuthentication().getName();
     Optional<User> user = userRepository.findByUsername(username);
     Optional<Book> book = bookRepository.findById(id);
@@ -38,7 +38,7 @@ public class BookRecommendationController {
   }
 
   @DeleteMapping("/remove/{id}")
-  public void deleteFavoriteBook(@PathVariable Long id) {
+  public void deleteFavoriteBook(@PathVariable("id") Long id) {
     String username = SecurityContextHolder.getContext().getAuthentication().getName();
     Optional<User> user = userRepository.findByUsername(username);
     Optional<Book> book = bookRepository.findById(id);
