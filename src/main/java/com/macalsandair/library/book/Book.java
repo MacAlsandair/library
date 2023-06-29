@@ -1,13 +1,26 @@
 package com.macalsandair.library.book;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
+import com.macalsandair.library.user.User;
+import com.macalsandair.library.user.UserFavoriteBook;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity(name = "Book")
@@ -24,6 +37,19 @@ public class Book implements Serializable {
 	private short yearOfPublication;
 	private String genre;
 	
+	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Set<UserFavoriteBook> userFavoriteBooks = new HashSet<>();
+
+	public Set<UserFavoriteBook> getUserFavoriteBooks() {
+		return userFavoriteBooks;
+	}
+
+
+	public void setUserFavoriteBooks(Set<UserFavoriteBook> userFavoriteBooks) {
+		this.userFavoriteBooks = userFavoriteBooks;
+	}
+
+
 	public Book() {
 		super();
 	}

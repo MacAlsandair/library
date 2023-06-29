@@ -1,5 +1,6 @@
 package com.macalsandair.library.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.macalsandair.library.book.Book;
@@ -11,14 +12,16 @@ import java.util.stream.Collectors;
 @Service
 public class BookRecommendationService {
 
-    private final BookRepository bookRepository;
-    
-    public BookRecommendationService(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
-    }
+	@Autowired
+    private BookRepository bookRepository;
+
 
     public Set<Book> recommendBooks(User user) {
-        Set<Book> favoriteBooks = user.getFavoriteBooks();
+        Set<UserFavoriteBook> favoriteBooksLinks = user.getFavoriteBooks();
+
+        Set<Book> favoriteBooks = favoriteBooksLinks.stream()
+                .map(UserFavoriteBook::getBook)
+                .collect(Collectors.toSet());
 
         Set<String> favoriteAuthors = favoriteBooks.stream()
                 .map(Book::getAuthor)
@@ -43,3 +46,4 @@ public class BookRecommendationService {
                 .collect(Collectors.toSet());
     }
 }
+

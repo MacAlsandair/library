@@ -1,6 +1,8 @@
 package com.macalsandair.library.user;
 
 import jakarta.persistence.JoinColumn;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -38,32 +41,52 @@ public class User implements UserDetails {
     private String password;
     private boolean enabled;
     
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinTable(name = "user_favorite_books", 
-               joinColumns = {@JoinColumn(name = "user_id")}, 
-               inverseJoinColumns = {@JoinColumn(name = "book_id")})
-    private Set<Book> favoriteBooks = new HashSet<>();
-    
-    
-    public Set<Book> getFavoriteBooks() {
-        return favoriteBooks;
-    }
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserFavoriteBook> favoriteBooks = new HashSet<>();
 
-    public void setFavoriteBooks(Set<Book> favoriteBooks) {
-        this.favoriteBooks = favoriteBooks;
-    }
-    
     public void addFavoriteBook(Book book) {
-        this.favoriteBooks.add(book);
+        UserFavoriteBook userFavoriteBooks = new UserFavoriteBook(this, book);
+        favoriteBooks.add(userFavoriteBooks);
+        //book.getUserFavoriteBooks().add(userFavoriteBooks);  // assuming getUserFavoriteBooks() returns a Set<UserFavoriteBooks>
     }
 
     public void removeFavoriteBook(Book book) {
-        this.favoriteBooks.remove(book);
+        UserFavoriteBook toRemove = null;
+        for (UserFavoriteBook userFavoriteBooks : this.favoriteBooks) {
+            if (userFavoriteBooks.getBook().equals(book)) {
+                toRemove = userFavoriteBooks;
+                break;
+            }
+        }
+        if (toRemove != null){
+            book.getUserFavoriteBooks().remove(toRemove); // assuming getUserFavoriteBooks() returns a Set<UserFavoriteBooks>
+            favoriteBooks.remove(toRemove);
+            toRemove.setBook(null);
+            toRemove.setUser(null);
+        }
     }
 
-    public boolean isFavoriteBook(Book book) {
-        return this.favoriteBooks.contains(book);
-    }
+    
+    
+    
+    
+    public Set<UserFavoriteBook> getFavoriteBooks() {
+		return favoriteBooks;
+	}
+
+	public void setFavoriteBooks(Set<UserFavoriteBook> favoriteBooks) {
+		this.favoriteBooks = favoriteBooks;
+	}
+
+	public boolean isFavoriteBook(Book book) {
+	    for (UserFavoriteBook favoriteBook : favoriteBooks) {
+	        if (favoriteBook.getBook().equals(book)) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+
 
     public Long getId() {
 		return id;
