@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.macalsandair.library.book.Book;
+import com.macalsandair.library.book.BookRepository;
 
 import java.util.Optional;
 import java.util.Set;
@@ -17,28 +18,33 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/recommendations")
 public class BookRecommendationController {
 	
-	
   @Autowired
   private BookRecommendationService bookRecommendationService;
   @Autowired
   private UserRepository userRepository;
+  @Autowired
+  private BookRepository bookRepository;
 
-  @PostMapping("/add")
-  public void addFavoriteBook(@RequestBody Book book) {
+  @PostMapping("/add/{id}")
+  public void addFavoriteBook(@PathVariable Long id) {
     String username = SecurityContextHolder.getContext().getAuthentication().getName();
     Optional<User> user = userRepository.findByUsername(username);
-    if (!user.get().isFavoriteBook(book)) {
-      user.get().addFavoriteBook(book);
+    Optional<Book> book = bookRepository.findById(id);
+
+    if (book.isPresent() && !user.get().isFavoriteBook(book.get())) {
+      user.get().addFavoriteBook(book.get());
       userRepository.save(user.get());
     }
   }
 
-  @DeleteMapping("/remove")
-  public void deleteFavoriteBook(@RequestBody Book book) {
+  @DeleteMapping("/remove/{id}")
+  public void deleteFavoriteBook(@PathVariable Long id) {
     String username = SecurityContextHolder.getContext().getAuthentication().getName();
     Optional<User> user = userRepository.findByUsername(username);
-    if (user.get().isFavoriteBook(book)) {
-      user.get().removeFavoriteBook(book);
+    Optional<Book> book = bookRepository.findById(id);
+
+    if (book.isPresent() && user.get().isFavoriteBook(book.get())) {
+      user.get().removeFavoriteBook(book.get());
       userRepository.save(user.get());
     }
   }
@@ -50,4 +56,5 @@ public class BookRecommendationController {
     return bookRecommendationService.recommendBooks(user.get());
   }
 }
+
 
