@@ -42,13 +42,16 @@ public class BookController {
 	
 	@PostMapping("/add")
 	public ResponseEntity<Book> addBook(@RequestBody Book book) {
-	    if (!bookRepository.existsById(book.getId())) {
+	    Optional<Book> existingBook = bookRepository.findByNameAndAuthor(book.getName(), book.getAuthor());
+
+	    if (!existingBook.isPresent()) {
 	        bookRepository.save(book);
-	        return new ResponseEntity<Book>(book, HttpStatus.CREATED);
+	        return new ResponseEntity<>(book, HttpStatus.CREATED);
 	    } else {
-	        return new ResponseEntity<Book>(HttpStatus.CONFLICT);
+	        return new ResponseEntity<>(HttpStatus.CONFLICT);
 	    }
 	}
+
 	
 	@PutMapping("/update")
 	public ResponseEntity<Book> updateBook(@RequestBody Book book) {
