@@ -3,6 +3,8 @@ package com.macalsandair.library.comment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.macalsandair.library.book.Book;
@@ -24,6 +26,10 @@ public class CommentToBookController {
 
 	@PostMapping
 	public CommentToBook addComment(@RequestBody CommentToBook comment) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
+		User author = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+		comment.setAuthor(author);
 		return commentToBookService.saveComment(comment);
 	}
 
