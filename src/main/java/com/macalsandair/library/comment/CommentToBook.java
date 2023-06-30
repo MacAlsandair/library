@@ -49,6 +49,10 @@ public class CommentToBook {
 		this.book = book;
 		this.commentText = commentText;
 	}
+	
+	public CommentToBook(String commentText) {
+		this.commentText = commentText;
+	}
 
 	public Long getId() {
 		return id;
