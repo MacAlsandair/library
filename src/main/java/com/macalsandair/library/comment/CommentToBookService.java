@@ -3,6 +3,7 @@ package com.macalsandair.library.comment;
 import com.macalsandair.library.book.Book;
 import com.macalsandair.library.user.User;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ public class CommentToBookService {
 	private CommentToBookRepository commentToBookRepository;
 
 	public CommentToBook saveComment(CommentToBook comment) {
+		if (comment.getTimeStamp() == null) {
+			comment.setTimeStamp(LocalDateTime.now());
+		}
 		return commentToBookRepository.save(comment);
 	}
 
