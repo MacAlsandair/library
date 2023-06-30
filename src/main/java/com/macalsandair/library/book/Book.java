@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.macalsandair.library.user.User;
 import com.macalsandair.library.user.UserFavoriteBook;
 
@@ -25,6 +27,7 @@ import jakarta.persistence.Table;
 
 @Entity(name = "Book")
 @Table(name = "book")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Book implements Serializable {
 
 	@Id
@@ -37,7 +40,9 @@ public class Book implements Serializable {
 	private short yearOfPublication;
 	private String genre;
 	
+
 	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
+	@JsonIgnore
 	private Set<UserFavoriteBook> userFavoriteBooks = new HashSet<>();
 
 	public Set<UserFavoriteBook> getUserFavoriteBooks() {
