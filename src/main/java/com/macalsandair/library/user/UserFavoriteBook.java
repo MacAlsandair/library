@@ -2,6 +2,7 @@ package com.macalsandair.library.user;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.macalsandair.library.book.Book;
 
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name="user_favorite_books")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserFavoriteBook {
 
     @Id

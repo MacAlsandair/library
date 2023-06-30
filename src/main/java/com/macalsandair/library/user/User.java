@@ -12,6 +12,8 @@ import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.macalsandair.library.auth.Roles;
 import com.macalsandair.library.book.Book;
 
@@ -31,6 +33,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements UserDetails {
 
     @Id
@@ -42,6 +45,7 @@ public class User implements UserDetails {
     private boolean enabled;
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private Set<UserFavoriteBook> favoriteBooks = new HashSet<>();
 
     public void addFavoriteBook(Book book) {

@@ -5,6 +5,7 @@ import java.security.interfaces.RSAPublicKey;
 import java.util.Collection;
 import java.util.function.Predicate;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,10 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -29,10 +33,13 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -86,6 +93,32 @@ public class SecurityConfiguration {
 			.cors(Customizer.withDefaults());
 		return http.build();
 	}
+    
+    
+    
+    //Die versuchung
+//    @Autowired
+//    private BearerTokenAuthenticationEntryPoint authenticationEntryPoint;
+//
+//    @Autowired
+//    private BearerTokenAccessDeniedHandler accessDeniedHandler;
+//
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http
+//            .authorizeHttpRequests(authorize -> authorize
+//                .requestMatchers("/api/auth/register").permitAll()
+//                .anyRequest().authenticated())
+//            .exceptionHandling(e -> e
+//                .authenticationEntryPoint(authenticationEntryPoint)
+//                .accessDeniedHandler(accessDeniedHandler))
+//            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        
+//        return http.build();
+//    }
+
+
+
 	
     
     @Bean
