@@ -21,7 +21,9 @@ public class CommentToBookController {
 	@Autowired
 	private CommentToBookService commentToBookService;
 
+	@Autowired
 	private UserRepository userRepository;
+	@Autowired
 	private BookRepository bookRepository;
 
 	@PostMapping("/{bookId}")
