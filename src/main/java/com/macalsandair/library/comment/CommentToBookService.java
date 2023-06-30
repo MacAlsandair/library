@@ -1,8 +1,6 @@
 package com.macalsandair.library.comment;
 
 import com.macalsandair.library.book.Book;
-import com.macalsandair.library.comment.CommentToBook;
-import com.macalsandair.library.comment.CommentToBookRepository;
 import com.macalsandair.library.user.User;
 
 import java.util.List;
