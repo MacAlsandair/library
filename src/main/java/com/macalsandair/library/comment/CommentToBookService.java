@@ -13,33 +13,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class CommentToBookService {
 
-  private final CommentToBookRepository commentToBookRepository;
+	@Autowired
+	private CommentToBookRepository commentToBookRepository;
 
-  @Autowired
-  public CommentToBookService(CommentToBookRepository commentToBookRepository) {
-    this.commentToBookRepository = commentToBookRepository;
-  }
+	public CommentToBook saveComment(CommentToBook comment) {
+		return commentToBookRepository.save(comment);
+	}
 
-  public CommentToBook saveComment(CommentToBook comment) {
-    return commentToBookRepository.save(comment);
-  }
+	public CommentToBook updateComment(Long id, CommentToBook updatedComment) {
+		return commentToBookRepository.findById(id).map(comment -> {
+			comment.setCommentText(updatedComment.getCommentText());
+			return commentToBookRepository.save(comment);
+		}).orElseThrow(() -> new RuntimeException("Comment not found: " + id.toString()));
+	}
 
-  public CommentToBook updateComment(Long id, CommentToBook updatedComment) {
-    return commentToBookRepository.findById(id).map(comment -> {
-      comment.setCommentText(updatedComment.getCommentText());
-      return commentToBookRepository.save(comment);
-    }).orElseThrow(() -> new RuntimeException("Comment not found: " + id.toString()));
-  }
+	public void deleteComment(Long id) {
+		commentToBookRepository.deleteById(id);
+	}
 
-  public void deleteComment(Long id) {
-    commentToBookRepository.deleteById(id);
-  }
-  
-  public List<CommentToBook> findByAuthor(User author) {
-    return commentToBookRepository.findByAuthor(author);
-  }
-  
-  public List<CommentToBook> findByBook(Book book) {
-    return commentToBookRepository.findByBook(book);
-  }
+	public List<CommentToBook> findByAuthor(User author) {
+		return commentToBookRepository.findByAuthor(author);
+	}
+
+	public List<CommentToBook> findByBook(Book book) {
+		return commentToBookRepository.findByBook(book);
+	}
 }

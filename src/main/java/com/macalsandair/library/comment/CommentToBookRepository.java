@@ -10,8 +10,8 @@ import com.macalsandair.library.user.User;
 
 @Repository
 public interface CommentToBookRepository extends JpaRepository<CommentToBook, Long> {
-	
+
 	public List<CommentToBook> findByAuthor(User author);
-	
+
 	public List<CommentToBook> findByBook(Book book);
 }
