@@ -24,12 +24,14 @@ public class CommentToBookController {
 	private UserRepository userRepository;
 	private BookRepository bookRepository;
 
-	@PostMapping
-	public CommentToBook addComment(@RequestBody CommentToBook comment) {
+	@PostMapping("/{bookId}")
+	public CommentToBook addComment(@PathVariable Long bookId, @RequestBody CommentToBook comment) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 		User author = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
+		Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found: " + bookId));
 		comment.setAuthor(author);
+		comment.setBook(book);
 		return commentToBookService.saveComment(comment);
 	}
 
