@@ -15,7 +15,7 @@ import com.macalsandair.library.user.UserRepository;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/comments")
+@RequestMapping("/api/comments")
 public class CommentToBookController {
 
 	@Autowired
