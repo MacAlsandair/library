@@ -38,6 +38,12 @@ public class CommentToBook {
     this.commentText = commentText;
     this.timeStamp = timeStamp;
   }
+  
+  public CommentToBook(User author, Book book, String commentText) {
+	    this.author = author;
+	    this.book = book;
+	    this.commentText = commentText;
+	  }
 
   public Long getId() {
     return id;
