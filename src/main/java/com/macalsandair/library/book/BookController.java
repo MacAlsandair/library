@@ -139,7 +139,11 @@ public class BookController {
 	            bookRepository.save(existingBook);
 	        } catch (IOException e) {
 	            // handle exception
-	        }
+	        } finally {
+				if(file != null) {
+					file.delete();	// Delete the temporary file
+				}
+			}
 	        return new ResponseEntity<>(existingBook, HttpStatus.CREATED);
 	    }
 	}
