@@ -12,6 +12,7 @@ import com.macalsandair.library.book.BookRepository;
 import com.macalsandair.library.user.User;
 import com.macalsandair.library.user.UserRepository;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -27,7 +28,8 @@ public class CommentToBookController {
 	private BookRepository bookRepository;
 
 	@PostMapping("/{bookId}")
-	public CommentToBook addComment(@PathVariable Long bookId, @RequestParam String commentText) {
+	public CommentToBook addComment(@PathVariable Long bookId, @RequestBody Map<String, String> body) {
+	    String commentText = body.get("commentText");
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
 	    CommentToBook comment = new CommentToBook();
