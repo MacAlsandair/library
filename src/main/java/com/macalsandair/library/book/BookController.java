@@ -74,7 +74,7 @@ public class BookController {
 		return new ResponseEntity<Book>(book, HttpStatus.CREATED);
 	}
 	
-	@PostMapping("/add")
+	@PostMapping("/add-with-image")
 	public ResponseEntity<Book> addBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
 			try {
 				// Upload image and get url
@@ -94,7 +94,7 @@ public class BookController {
 	}
 
 	//Similar approach for updateBook
-	@PutMapping("/update")
+	@PutMapping("/update-with-image")
 	public ResponseEntity<Book> updateBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
 			try {
 				File file = convert(imageFile);
@@ -109,6 +109,28 @@ public class BookController {
 			}
 
 			return new ResponseEntity<>(book, HttpStatus.CREATED);
+	}
+	
+	@PutMapping("/update-image/{id}")
+	public ResponseEntity<Book> updateBookImage(@PathVariable("id") Long id, @RequestPart("image") MultipartFile imageFile) {
+	    Optional<Book> existingBookOptional = bookRepository.findById(id);
+	    
+	    if (!existingBookOptional.isPresent()) {
+	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	    } else {
+	        Book existingBook = existingBookOptional.get();
+	        try {
+	            File file = convert(imageFile);
+	            Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+	            String url = (String) uploadResult.get("url");
+	            existingBook.setCoverImageUrl(url);
+
+	            bookRepository.save(existingBook);
+	        } catch (IOException e) {
+	            // handle exception
+	        }
+	        return new ResponseEntity<>(existingBook, HttpStatus.CREATED);
+	    }
 	}
 
 	//Utility method to convert MultipartFile to File
