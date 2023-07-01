@@ -72,5 +72,14 @@ public class BookController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
+	@GetMapping("/search/{text}")
+	public ResponseEntity<List<Book>> searchBook(@PathVariable("text") String text) {
+		List<Book> books = bookService.searchBook(text);
+		if (books.isEmpty()) {
+			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		}
+		return new ResponseEntity<>(books, HttpStatus.OK);
+	}
+	
 	
 }
