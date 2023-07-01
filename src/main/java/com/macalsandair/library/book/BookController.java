@@ -76,39 +76,49 @@ public class BookController {
 	
 	@PostMapping("/add-with-image")
 	public ResponseEntity<Book> addBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
-			try {
-				// Upload image and get url
-				File file = convert(imageFile);
-				Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-				String url = (String) uploadResult.get("url");
+		File file = null;
+		try {
+			file = convert(imageFile);
 
-				// Set book coverImageUrl
-				book.setCoverImageUrl(url);
+			Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+			String url = (String) uploadResult.get("url");
 
-				bookRepository.save(book);
-			} catch (IOException e) {
-				//handle exception
+			book.setCoverImageUrl(url);
+
+			bookRepository.save(book);
+		} catch (IOException e) {
+			//handle exception
+		} finally {
+			if(file != null) {
+				file.delete();	// Delete the temporary file
 			}
+		}
 
-			return new ResponseEntity<>(book, HttpStatus.CREATED);
+		return new ResponseEntity<>(book, HttpStatus.CREATED);
 	}
 
 	//Similar approach for updateBook
 	@PutMapping("/update-with-image")
 	public ResponseEntity<Book> updateBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
-			try {
-				File file = convert(imageFile);
-				Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-				String url = (String) uploadResult.get("url");
+		File file = null;
+		try {
+			file = convert(imageFile);
 
-				book.setCoverImageUrl(url);
+			Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
+			String url = (String) uploadResult.get("url");
 
-				bookRepository.save(book);
-			} catch (IOException e) {
-				//handle exception
+			book.setCoverImageUrl(url);
+
+			bookRepository.save(book);
+		} catch (IOException e) {
+			//handle exception
+		} finally {
+			if(file != null) {
+				file.delete();	// Delete the temporary file
 			}
+		}
 
-			return new ResponseEntity<>(book, HttpStatus.CREATED);
+		return new ResponseEntity<>(book, HttpStatus.CREATED);
 	}
 	
 	@PutMapping("/update-image/{id}")
@@ -119,8 +129,9 @@ public class BookController {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    } else {
 	        Book existingBook = existingBookOptional.get();
+			File file = null;
 	        try {
-	            File file = convert(imageFile);
+	            file = convert(imageFile);
 	            Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
 	            String url = (String) uploadResult.get("url");
 	            existingBook.setCoverImageUrl(url);
