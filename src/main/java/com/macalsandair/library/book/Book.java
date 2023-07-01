@@ -27,7 +27,7 @@ import jakarta.persistence.Table;
 
 @Entity(name = "Book")
 @Table(name = "book")
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class Book implements Serializable {
 
 	@Id
