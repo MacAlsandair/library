@@ -3,23 +3,28 @@ package com.macalsandair.library.comment;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.macalsandair.library.book.Book;
 import com.macalsandair.library.user.User;
 
 @Entity
 @Table(name = "comments")
+//@JsonIgnoreProperties({"hibernateLazyInitializer"})
 public class CommentToBook {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id", nullable = false)
+	//@JsonIgnore
 	private User author;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "book_id", nullable = false)
+	//@JsonIgnore
 	private Book book;
 
 	@Column(name = "comment", nullable = false)
