@@ -39,6 +39,7 @@ public class Book implements Serializable {
 	private String author;
 	private short yearOfPublication;
 	private String genre;
+	private String coverImageUrl;
 	
 
 	@OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -123,6 +124,16 @@ public class Book implements Serializable {
 		return Objects.equals(author, other.author) && Objects.equals(genre, other.genre)
 				&& Objects.equals(id, other.id) && Objects.equals(name, other.name)
 				&& yearOfPublication == other.yearOfPublication;
+	}
+
+
+	public String getCoverImageUrl() {
+		return coverImageUrl;
+	}
+
+
+	public void setCoverImageUrl(String coverImageUrl) {
+		this.coverImageUrl = coverImageUrl;
 	}
 
 	
