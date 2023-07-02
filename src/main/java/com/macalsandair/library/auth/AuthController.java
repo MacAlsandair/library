@@ -81,7 +81,8 @@ public class AuthController {
         User user = userRepository.findByUsername(username).get();
         if(passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())){
             if(!passwordChange.getNewPassword().equals(passwordChange.getOldPassword())){
-                user.setPassword(passwordChange.getNewPassword());
+            	String encryptedPassword = passwordEncoder.encode(passwordChange.getNewPassword());
+                user.setPassword(encryptedPassword);
                 userRepository.save(user);
                 return new ResponseEntity<>("Password Changed Successfully!", HttpStatus.OK);
             } else {
