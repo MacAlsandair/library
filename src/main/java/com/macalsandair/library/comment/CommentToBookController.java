@@ -26,6 +26,8 @@ public class CommentToBookController {
 	private UserRepository userRepository;
 	@Autowired
 	private BookRepository bookRepository;
+	@Autowired
+	private CommentToBookRepository commentToBookRepository;
 
 	@PostMapping("/{bookId}")
 	public CommentToBook addComment(@PathVariable Long bookId, @RequestBody Map<String, String> body) {
@@ -42,8 +44,15 @@ public class CommentToBookController {
 	}
 
 	@PutMapping("/{id}")
-	public CommentToBook updateComment(@PathVariable Long id, @RequestBody CommentToBook updatedComment) {
-		return commentToBookService.updateComment(id, updatedComment);
+	public ResponseEntity<?> updateComment(@PathVariable Long id, @RequestBody Map<String, String> body) {
+		String commentText = body.get("commentText");
+		Optional<CommentToBook> updatedComment = commentToBookRepository.findById(id);
+		if (updatedComment.isPresent()) {
+			updatedComment.get().setCommentText(commentText);
+			return new ResponseEntity<>(commentToBookService.updateComment(id, updatedComment.get()), HttpStatus.OK);
+		}
+		return new ResponseEntity<>("No comment found with ID: " + id, HttpStatus.NOT_FOUND);
+
 	}
 
 	@DeleteMapping("/{id}")
