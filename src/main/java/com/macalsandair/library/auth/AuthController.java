@@ -1,5 +1,6 @@
 package com.macalsandair.library.auth;
 
+import java.nio.CharBuffer;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
@@ -68,6 +69,8 @@ public class AuthController {
         User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(registration.getPassword()));
+        char[] passwordMock = new char[]{'0', '0', '0'};
+        registration.setPassword(CharBuffer.wrap(passwordMock));
         user.setEnabled(true);
         List<Roles> roles = Arrays.asList(Roles.USER);
         user.setRoles(roles);
@@ -82,6 +85,9 @@ public class AuthController {
         if(passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())){
             if(!passwordChange.getNewPassword().equals(passwordChange.getOldPassword())){
             	String encryptedPassword = passwordEncoder.encode(passwordChange.getNewPassword());
+                char[] passwordMock = new char[]{'0', '0', '0'};
+                passwordChange.setOldPassword(CharBuffer.wrap(passwordMock));
+                passwordChange.setNewPassword(CharBuffer.wrap(passwordMock));
                 user.setPassword(encryptedPassword);
                 userRepository.save(user);
                 return new ResponseEntity<>("Password Changed Successfully!", HttpStatus.OK);
