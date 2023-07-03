@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.macalsandair.library.auth.Roles;
 import com.macalsandair.library.book.Book;
+import com.macalsandair.library.comment.CommentToBook;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.ElementCollection;
@@ -53,6 +54,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private Set<UserFavoriteBook> favoriteBooks = new HashSet<>();
+    
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "author", orphanRemoval = true)
+    @JsonIgnore
+    private Set<CommentToBook> comments;
 
     public void addFavoriteBook(Book book) {
         UserFavoriteBook userFavoriteBooks = new UserFavoriteBook(this, book);
