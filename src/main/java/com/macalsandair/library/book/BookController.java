@@ -36,7 +36,6 @@ import jakarta.transaction.Transactional;
 
 @RestController
 @RequestMapping("/api/book")
-@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class BookController {
 	
 	private Cloudinary cloudinary = new Cloudinary(
@@ -55,6 +54,7 @@ public class BookController {
 		return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/add")
 	public ResponseEntity<Book> addBook(@RequestBody Book book) {
 	    Optional<Book> existingBook = bookRepository.findByNameAndAuthor(book.getName(), book.getAuthor());
@@ -67,13 +67,14 @@ public class BookController {
 	    }
 	}
 
-	
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/update")
 	public ResponseEntity<Book> updateBook(@RequestBody Book book) {
 		bookRepository.save(book);
 		return new ResponseEntity<Book>(book, HttpStatus.CREATED);
 	}
 	
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/add-with-image")
 	public ResponseEntity<Book> addBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
 		File file = null;
@@ -97,7 +98,7 @@ public class BookController {
 		return new ResponseEntity<>(book, HttpStatus.CREATED);
 	}
 
-	//Similar approach for updateBook
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/update-with-image")
 	public ResponseEntity<Book> updateBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
 		File file = null;
@@ -121,6 +122,7 @@ public class BookController {
 		return new ResponseEntity<>(book, HttpStatus.CREATED);
 	}
 	
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/update-image/{id}")
 	public ResponseEntity<Book> updateBookImage(@PathVariable("id") Long id, @RequestPart("image") MultipartFile imageFile) {
 	    Optional<Book> existingBookOptional = bookRepository.findById(id);
@@ -148,7 +150,6 @@ public class BookController {
 	    }
 	}
 
-	//Utility method to convert MultipartFile to File
 	private File convert(MultipartFile file) throws IOException {
 	    File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
 	    FileOutputStream fos = new FileOutputStream(convFile);
@@ -163,6 +164,7 @@ public class BookController {
 		return new ResponseEntity<>(findedBook, HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@Transactional
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<?> deleteBookById(@PathVariable("id") Long id) {

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -60,6 +61,24 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<String> registerNewUser(@RequestBody UserRegistrationDTO registration){
+        String username = registration.getUsername();
+        Optional<User> optUser = userRepository.findByUsername(username);
+        if(optUser.isPresent()){
+            return new ResponseEntity<>("Username already exists!", HttpStatus.BAD_REQUEST);
+        }
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(registration.getPassword()));
+        user.setEnabled(true);
+        List<Role> roles = Arrays.asList(Role.USER);
+        user.setRoles(roles);
+        userRepository.save(user);
+        return new ResponseEntity<>("User Registered Successfully!", HttpStatus.CREATED);
+    }
+    
+	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PostMapping("/register-admin")
+    public ResponseEntity<String> registerNewAdmin(@RequestBody UserRegistrationDTO registration){
         String username = registration.getUsername();
         Optional<User> optUser = userRepository.findByUsername(username);
         if(optUser.isPresent()){
