@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.macalsandair.library.auth.Permission;
-
 public enum Role implements GrantedAuthority {
 
 	USER(Collections.emptySet()),
