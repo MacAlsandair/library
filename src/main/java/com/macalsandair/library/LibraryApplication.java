@@ -15,9 +15,9 @@ public class LibraryApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(LibraryApplication.class, args);
 	}
-	
-	@Bean
-	public CorsFilter corsFilter() {
+
+    @Bean
+    CorsFilter corsFilter() {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.setAllowCredentials(true);
 		corsConfiguration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
