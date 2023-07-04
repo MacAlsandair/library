@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.macalsandair.library.auth.Roles;
+import com.macalsandair.library.auth.Role;
 import com.macalsandair.library.book.Book;
 import com.macalsandair.library.comment.CommentToBook;
 
@@ -50,6 +51,15 @@ public class User implements UserDetails {
     private String password;
     @JsonIgnore
     private boolean enabled;
+    
+//	@ElementCollection(fetch = FetchType.EAGER)
+//    @Enumerated(EnumType.STRING)
+//    private List<Role> roles;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    private List<Role> roles;
+
     
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -135,11 +145,11 @@ public class User implements UserDetails {
 		this.enabled = enabled;
 	}
 
-	public List<Roles> getRoles() {
+	public List<Role> getRoles() {
 		return roles;
 	}
 
-	public void setRoles(List<Roles> roles) {
+	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
 	
@@ -149,7 +159,7 @@ public class User implements UserDetails {
 		super();
 	}
 
-	public User(String username, String password, boolean enabled, List<Roles> roles) {
+	public User(String username, String password, boolean enabled, List<Role> roles) {
 		this.username = username;
 		this.password = password;
 		this.enabled = enabled;
@@ -180,16 +190,16 @@ public class User implements UserDetails {
 
 
 
-	@ElementCollection(fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
-    private List<Roles> roles;
 
     // `UserDetails` methods
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles;
-    }
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+	    return this.roles.stream()
+	            .flatMap(role -> role.getAuthorities().stream())
+	            .collect(Collectors.toList());
+	}
+
     
 
 	@Override
