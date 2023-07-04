@@ -78,14 +78,21 @@ public class SecurityConfiguration {
 	
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new CustomJwtGrantedAuthoritiesConverter());
+		
+		
 		http
 			.authorizeHttpRequests((authorize) -> authorize
 					.requestMatchers("/api/auth/register").permitAll()
-					.requestMatchers("/api/**").hasAnyRole(Role.USER.name())
+					.requestMatchers("/api/**").hasAnyRole(Role.ADMIN.name())
 					.anyRequest().authenticated())
 			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
 			.httpBasic(Customizer.withDefaults())
-			.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+			//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+	        .oauth2ResourceServer(oauth2 -> oauth2
+	                .jwt()
+	                .jwtAuthenticationConverter(jwtAuthenticationConverter))
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 			.exceptionHandling((exceptions) -> exceptions
 					.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
@@ -105,9 +112,15 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
     
+//    @Bean
+//    JwtDecoder jwtDecoder() {
+//        return NimbusJwtDecoder.withPublicKey(this.key).build();
+//    }
+    
     @Bean
     JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(this.key).build();
+        NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withPublicKey(this.key).build();
+        return jwtDecoder;
     }
 
     @Bean
