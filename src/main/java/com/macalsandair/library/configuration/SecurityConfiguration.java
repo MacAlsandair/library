@@ -77,7 +77,7 @@ public class SecurityConfiguration {
 	
 	
 	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 	    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new CustomJwtGrantedAuthoritiesConverter());
 		
@@ -89,7 +89,6 @@ public class SecurityConfiguration {
 					.anyRequest().authenticated())
 			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
 			.httpBasic(Customizer.withDefaults())
-			//.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
 	        .oauth2ResourceServer(oauth2 -> oauth2
 	                .jwt()
 	                .jwtAuthenticationConverter(jwtAuthenticationConverter))
@@ -101,21 +100,11 @@ public class SecurityConfiguration {
 			.cors(Customizer.withDefaults());
 		return http.build();
 	}
-    
 
-
-
-	
-    
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
-//    @Bean
-//    JwtDecoder jwtDecoder() {
-//        return NimbusJwtDecoder.withPublicKey(this.key).build();
-//    }
     
     @Bean
     JwtDecoder jwtDecoder() {
@@ -129,16 +118,4 @@ public class SecurityConfiguration {
         JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
-
-//    @Bean
-//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-//        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
-//        converter.setJwtGrantedAuthoritiesConverter(new CustomJwtGrantedAuthoritiesConverter());
-//        return converter;
-//    }
-
-	
-
-	
-
 }

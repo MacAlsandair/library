@@ -41,20 +41,14 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    //@JsonView(JsonPublicView.class)
     private Long id;
 
-    //@JsonView(JsonPublicView.class)
     private String username;
     
     @JsonIgnore
     private String password;
     @JsonIgnore
     private boolean enabled;
-    
-//	@ElementCollection(fetch = FetchType.EAGER)
-//    @Enumerated(EnumType.STRING)
-//    private List<Role> roles;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -72,7 +66,6 @@ public class User implements UserDetails {
     public void addFavoriteBook(Book book) {
         UserFavoriteBook userFavoriteBooks = new UserFavoriteBook(this, book);
         favoriteBooks.add(userFavoriteBooks);
-        //book.getUserFavoriteBooks().add(userFavoriteBooks);  // assuming getUserFavoriteBooks() returns a Set<UserFavoriteBooks>
     }
 
     public void removeFavoriteBook(Book book) {
@@ -84,16 +77,12 @@ public class User implements UserDetails {
             }
         }
         if (toRemove != null){
-            book.getUserFavoriteBooks().remove(toRemove); // assuming getUserFavoriteBooks() returns a Set<UserFavoriteBooks>
+            book.getUserFavoriteBooks().remove(toRemove);
             favoriteBooks.remove(toRemove);
             toRemove.setBook(null);
             toRemove.setUser(null);
         }
     }
-
-    
-    
-    
     
     public Set<UserFavoriteBook> getFavoriteBooks() {
 		return favoriteBooks;
@@ -205,21 +194,18 @@ public class User implements UserDetails {
 	@Override
 	@JsonIgnore
 	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	@JsonIgnore
 	public boolean isAccountNonLocked() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	@JsonIgnore
 	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 }
