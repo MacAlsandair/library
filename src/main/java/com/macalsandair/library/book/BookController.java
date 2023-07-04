@@ -12,6 +12,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,11 +34,9 @@ import com.macalsandair.library.auth.Role;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
 
-//@RolesAllowed("ADMINISTRATOR")
-//@PreAuthorize("hasRole('ADMINISTRATOR')")
 @RestController
 @RequestMapping("/api/book")
-//@PreAuthorize("hasAuthority(Role.ADMIN_READ.name())")
+@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 public class BookController {
 	
 	private Cloudinary cloudinary = new Cloudinary(

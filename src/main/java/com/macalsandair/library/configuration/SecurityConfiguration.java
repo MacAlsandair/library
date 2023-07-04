@@ -85,7 +85,7 @@ public class SecurityConfiguration {
 		http
 			.authorizeHttpRequests((authorize) -> authorize
 					.requestMatchers("/api/auth/register").permitAll()
-					.requestMatchers("/api/**").hasAnyRole(Role.ADMIN.name())
+					//.requestMatchers("/api/**").hasAnyRole(Role.ADMIN.name())
 					.anyRequest().authenticated())
 			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
 			.httpBasic(Customizer.withDefaults())
