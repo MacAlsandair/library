@@ -28,7 +28,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.macalsandair.library.auth.Roles;
+import com.macalsandair.library.auth.Role;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;
@@ -37,6 +37,7 @@ import jakarta.transaction.Transactional;
 //@PreAuthorize("hasRole('ADMINISTRATOR')")
 @RestController
 @RequestMapping("/api/book")
+//@PreAuthorize("hasAuthority(Role.ADMIN_READ.name())")
 public class BookController {
 	
 	private Cloudinary cloudinary = new Cloudinary(

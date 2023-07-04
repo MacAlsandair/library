@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.macalsandair.library.auth.Roles;
+import com.macalsandair.library.auth.Role;
 import com.macalsandair.library.user.UserDetailsServiceImpl;
 import com.macalsandair.library.user.UserRepository;
 import com.nimbusds.jose.jwk.JWK;
@@ -81,6 +81,7 @@ public class SecurityConfiguration {
 		http
 			.authorizeHttpRequests((authorize) -> authorize
 					.requestMatchers("/api/auth/register").permitAll()
+					.requestMatchers("/api/**").hasAnyRole(Role.USER.name())
 					.anyRequest().authenticated())
 			.csrf(csrf -> csrf.ignoringRequestMatchers("/api/auth/**"))
 			.httpBasic(Customizer.withDefaults())
@@ -94,28 +95,6 @@ public class SecurityConfiguration {
 		return http.build();
 	}
     
-    
-    
-    //Die versuchung
-//    @Autowired
-//    private BearerTokenAuthenticationEntryPoint authenticationEntryPoint;
-//
-//    @Autowired
-//    private BearerTokenAccessDeniedHandler accessDeniedHandler;
-//
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeHttpRequests(authorize -> authorize
-//                .requestMatchers("/api/auth/register").permitAll()
-//                .anyRequest().authenticated())
-//            .exceptionHandling(e -> e
-//                .authenticationEntryPoint(authenticationEntryPoint)
-//                .accessDeniedHandler(accessDeniedHandler))
-//            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-//        
-//        return http.build();
-//    }
 
 
 
@@ -138,16 +117,13 @@ public class SecurityConfiguration {
         return new NimbusJwtEncoder(jwks);
     }
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // Remove the SCOPE_ prefix
-        //grantedAuthoritiesConverter.setAuthorityPrefix("");
+//    @Bean
+//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+//        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+//        converter.setJwtGrantedAuthoritiesConverter(new CustomJwtGrantedAuthoritiesConverter());
+//        return converter;
+//    }
 
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-        return jwtAuthenticationConverter;
-    }
 	
 
 	
