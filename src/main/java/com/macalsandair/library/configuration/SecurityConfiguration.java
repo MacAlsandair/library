@@ -65,7 +65,6 @@ public class SecurityConfiguration {
 	private final RSAPublicKey key;
 	private final RSAPrivateKey priv;
 	
-	
     public SecurityConfiguration(
             @Value("${jwt.public.key}") RSAPublicKey key,
             @Value("${jwt.private.key}") RSAPrivateKey priv
@@ -73,9 +72,7 @@ public class SecurityConfiguration {
             this.key = key;
             this.priv = priv;
         }
-	
-	
-	
+    
 	@Bean
 	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 	    JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
