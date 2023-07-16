@@ -67,4 +67,20 @@ public class BookRecommendationController {
 		Optional<User> user = userRepository.findByUsername(auth.getName());
 		return bookRecommendationService.recommendBooks(user.get());
 	}
+	
+	@GetMapping("/checkFavorite/{id}")
+	public ResponseEntity<Boolean> checkFavoriteBook(@PathVariable("id") Long id) {
+	  String username = SecurityContextHolder.getContext().getAuthentication().getName();
+	  Optional<User> user = userRepository.findByUsername(username);
+	  Optional<Book> book = bookRepository.findById(id);
+
+	  if (book.isPresent() && user.get().isFavoriteBook(book.get())) {
+	    return new ResponseEntity<>(true, HttpStatus.OK);
+	  } else if (!book.isPresent()) {
+	    return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
+	  } else {
+	    return new ResponseEntity<>(false, HttpStatus.OK);
+	  }
+	}
+
 }
