@@ -25,22 +25,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.macalsandair.library.user.User;
 import com.macalsandair.library.user.UserRepository;
+import com.macalsandair.library.user.UserService;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final JwtEncoder encoder;
+	@Autowired
+    private JwtEncoder encoder;
     @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    public AuthController(JwtEncoder encoder) {
-        this.encoder = encoder;
-    }
+    private UserService userService;
 
     @PostMapping("")
     public String auth(Authentication authentication) {
@@ -61,63 +55,27 @@ public class AuthController {
     
     @PostMapping("/register")
     public ResponseEntity<String> registerNewUser(@RequestBody UserRegistrationDTO registration){
-        String username = registration.getUsername();
-        Optional<User> optUser = userRepository.findByUsername(username);
-        if(optUser.isPresent()){
-            return new ResponseEntity<>("Username already exists!", HttpStatus.BAD_REQUEST);
-        }
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(registration.getPassword()));
-        user.setEnabled(true);
-        List<Role> roles = Arrays.asList(Role.USER);
-        user.setRoles(roles);
-        userRepository.save(user);
-        return new ResponseEntity<>("User Registered Successfully!", HttpStatus.CREATED);
+        String message = userService.registerNewUser(registration);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
-    
-	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/register-admin")
     public ResponseEntity<String> registerNewAdmin(@RequestBody UserRegistrationDTO registration){
-        String username = registration.getUsername();
-        Optional<User> optUser = userRepository.findByUsername(username);
-        if(optUser.isPresent()){
-            return new ResponseEntity<>("Username already exists!", HttpStatus.BAD_REQUEST);
-        }
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(registration.getPassword()));
-        user.setEnabled(true);
-        List<Role> roles = Arrays.asList(Role.USER, Role.ADMIN);
-        user.setRoles(roles);
-        userRepository.save(user);
-        return new ResponseEntity<>("User Registered Successfully!", HttpStatus.CREATED);
+        String message = userService.registerNewAdmin(registration);
+        return new ResponseEntity<>(message, HttpStatus.CREATED);
     }
-    
+
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(@RequestBody PasswordChangeDTO passwordChange, Authentication authentication){
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).get();
-        if(passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())){
-            if(!passwordChange.getNewPassword().equals(passwordChange.getOldPassword())){
-            	String encryptedPassword = passwordEncoder.encode(passwordChange.getNewPassword());
-                user.setPassword(encryptedPassword);
-                userRepository.save(user);
-                return new ResponseEntity<>("Password Changed Successfully!", HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("New Password is the same as the old one!", HttpStatus.BAD_REQUEST);
-            }
-        } else {
-            return new ResponseEntity<>("Invalid Old Password!", HttpStatus.BAD_REQUEST);
-        }
+        String message = userService.changePassword(passwordChange, authentication.getName());
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
-    
+
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteUser(Authentication authentication){
-        String username = authentication.getName();
-        User user = userRepository.findByUsername(username).get();
-        userRepository.delete(user);
-        return new ResponseEntity<>("User Deleted Successfully!", HttpStatus.OK);
+        String message = userService.deleteUser(authentication.getName());
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
 }
