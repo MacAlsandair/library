@@ -12,6 +12,7 @@ import com.macalsandair.library.book.BookRepository;
 import com.macalsandair.library.user.User;
 import com.macalsandair.library.user.UserRepository;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,62 +20,34 @@ import java.util.Optional;
 @RequestMapping("/api/comments")
 public class CommentToBookController {
 
-	@Autowired
-	private CommentToBookService commentToBookService;
+    @Autowired
+    private CommentToBookService commentToBookService;
 
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private BookRepository bookRepository;
-	@Autowired
-	private CommentToBookRepository commentToBookRepository;
+    @PostMapping("/{bookId}")
+    public CommentToBook addComment(@PathVariable Long bookId, @RequestBody Map<String, String> body) {
+        String commentText = body.get("commentText");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return commentToBookService.saveComment(bookId, commentText, username);
+    }
 
-	@PostMapping("/{bookId}")
-	public CommentToBook addComment(@PathVariable Long bookId, @RequestBody Map<String, String> body) {
-	    String commentText = body.get("commentText");
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String username = auth.getName();
-	    CommentToBook comment = new CommentToBook();
-		User author = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found: " + username));
-		Book book = bookRepository.findById(bookId).orElseThrow(() -> new RuntimeException("Book not found: " + bookId));
-		comment.setAuthor(author);
-		comment.setBook(book);
-	    comment.setCommentText(commentText);
-		return commentToBookService.saveComment(comment);
-	}
+    @PutMapping("/{id}")
+    public CommentToBook updateComment(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        String commentText = body.get("commentText");
+        return commentToBookService.updateComment(id, commentText);
+    }
 
-	@PutMapping("/{id}")
-	public ResponseEntity<?> updateComment(@PathVariable Long id, @RequestBody Map<String, String> body) {
-		String commentText = body.get("commentText");
-		Optional<CommentToBook> updatedComment = commentToBookRepository.findById(id);
-		if (updatedComment.isPresent()) {
-			updatedComment.get().setCommentText(commentText);
-			return new ResponseEntity<>(commentToBookService.updateComment(id, updatedComment.get()), HttpStatus.OK);
-		}
-		return new ResponseEntity<>("No comment found with ID: " + id, HttpStatus.NOT_FOUND);
+    @DeleteMapping("/{id}")
+    public void deleteComment(@PathVariable Long id) {
+        commentToBookService.deleteComment(id);
+    }
 
-	}
+    @GetMapping("/author/{authorId}")
+    public List<CommentToBook> findCommentsByAuthor(@PathVariable Long authorId) {
+        return commentToBookService.findByAuthor(authorId);
+    }
 
-	@DeleteMapping("/{id}")
-	public void deleteComment(@PathVariable Long id) {
-		commentToBookService.deleteComment(id);
-	}
-
-	@GetMapping("/author/{authorId}")
-	public ResponseEntity<?> findCommentsByAuthor(@PathVariable Long authorId) {
-		Optional<User> author = userRepository.findById(authorId);
-		if (author.isPresent()) {
-			return new ResponseEntity<>(commentToBookService.findByAuthor(author.get()), HttpStatus.OK);
-		}
-		return new ResponseEntity<>("No author found with ID: " + authorId, HttpStatus.NOT_FOUND);
-	}
-
-	@GetMapping("/book/{bookId}")
-	public ResponseEntity<?> findCommentsByBook(@PathVariable Long bookId) {
-		Optional<Book> book = bookRepository.findById(bookId);
-		if (book.isPresent()) {
-			return new ResponseEntity<>(commentToBookService.findByBook(book.get()), HttpStatus.OK);
-		}
-		return new ResponseEntity<>("No book found with ID: " + bookId, HttpStatus.NOT_FOUND);
-	}
+    @GetMapping("/book/{bookId}")
+    public List<CommentToBook> findCommentsByBook(@PathVariable Long bookId) {
+        return commentToBookService.findByBook(bookId);
+    }
 }
