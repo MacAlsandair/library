@@ -37,127 +37,50 @@ import jakarta.transaction.Transactional;
 @RestController
 @RequestMapping("/api/book")
 public class BookController {
-	
-	private Cloudinary cloudinary = new Cloudinary(
-			ObjectUtils.asMap("cloud_name", "dl1raltsg", 
-								"api_key", "883681461635441", 
-								"api_secret", "4rpQSvE3KUuYK4rISWlLp63haio"));
-	
-	@Autowired
-	private BookRepository bookRepository;
 	@Autowired
 	private BookService bookService;
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<Book>> getAllBooks() {
-		List<Book> books = bookRepository.findAll();
+		List<Book> books = bookService.getAllBooks();
 		return new ResponseEntity<List<Book>>(books, HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/add")
 	public ResponseEntity<Book> addBook(@RequestBody Book book) {
-	    Optional<Book> existingBook = bookRepository.findByNameAndAuthor(book.getName(), book.getAuthor());
-
-	    if (!existingBook.isPresent()) {
-	        bookRepository.save(book);
-	        return new ResponseEntity<>(book, HttpStatus.CREATED);
-	    } else {
-	        return new ResponseEntity<>(HttpStatus.CONFLICT);
-	    }
+	    Book savedBook = bookService.addBook(book);
+	    return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
 	}
 
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/update")
 	public ResponseEntity<Book> updateBook(@RequestBody Book book) {
-		bookRepository.save(book);
-		return new ResponseEntity<Book>(book, HttpStatus.CREATED);
+		Book updatedBook = bookService.updateBook(book);
+		return new ResponseEntity<Book>(updatedBook, HttpStatus.CREATED);
 	}
 	
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PostMapping("/add-with-image")
 	public ResponseEntity<Book> addBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
-		File file = null;
-		try {
-			file = convert(imageFile);
-
-			Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-			String url = (String) uploadResult.get("url");
-
-			book.setCoverImageUrl(url);
-
-			bookRepository.save(book);
-		} catch (IOException e) {
-			//handle exception
-		} finally {
-			if(file != null) {
-				file.delete();	// Delete the temporary file
-			}
-		}
-
-		return new ResponseEntity<>(book, HttpStatus.CREATED);
+		Book savedBook = bookService.addBookWithImage(book, imageFile);
+		return new ResponseEntity<>(savedBook, HttpStatus.CREATED);
 	}
 
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/update-with-image")
 	public ResponseEntity<Book> updateBook(@RequestPart("book") Book book, @RequestPart("image") MultipartFile imageFile) {
-		File file = null;
-		try {
-			file = convert(imageFile);
-
-			Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-			String url = (String) uploadResult.get("url");
-
-			book.setCoverImageUrl(url);
-
-			bookRepository.save(book);
-		} catch (IOException e) {
-			//handle exception
-		} finally {
-			if(file != null) {
-				file.delete();	// Delete the temporary file
-			}
-		}
-
-		return new ResponseEntity<>(book, HttpStatus.CREATED);
+		Book updatedBook = bookService.updateBookWithImage(book, imageFile);
+		return new ResponseEntity<>(updatedBook, HttpStatus.CREATED);
 	}
 	
 	@PreAuthorize("hasAuthority('ROLE_ADMIN')")
 	@PutMapping("/update-image/{id}")
 	public ResponseEntity<Book> updateBookImage(@PathVariable("id") Long id, @RequestPart("image") MultipartFile imageFile) {
-	    Optional<Book> existingBookOptional = bookRepository.findById(id);
-	    
-	    if (!existingBookOptional.isPresent()) {
-	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-	    } else {
-	        Book existingBook = existingBookOptional.get();
-			File file = null;
-	        try {
-	            file = convert(imageFile);
-	            Map uploadResult = cloudinary.uploader().upload(file, ObjectUtils.emptyMap());
-	            String url = (String) uploadResult.get("url");
-	            existingBook.setCoverImageUrl(url);
-
-	            bookRepository.save(existingBook);
-	        } catch (IOException e) {
-	            // handle exception
-	        } finally {
-				if(file != null) {
-					file.delete();	// Delete the temporary file
-				}
-			}
-	        return new ResponseEntity<>(existingBook, HttpStatus.CREATED);
-	    }
+	    Book updatedBook = bookService.updateBookImage(id, imageFile);
+	    return new ResponseEntity<>(updatedBook, HttpStatus.CREATED);
 	}
 
-	private File convert(MultipartFile file) throws IOException {
-	    File convFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
-	    FileOutputStream fos = new FileOutputStream(convFile);
-	    fos.write(file.getBytes());
-	    fos.close();
-	    return convFile;
-	}
-	
 	@GetMapping("find/{id}")
 	public ResponseEntity<Book> findBookById(@PathVariable("id") Long id) {
 		Book findedBook = bookService.findBookById(id);
@@ -168,7 +91,7 @@ public class BookController {
 	@Transactional
 	@DeleteMapping("delete/{id}")
 	public ResponseEntity<?> deleteBookById(@PathVariable("id") Long id) {
-		bookRepository.deleteById(id);
+		bookService.deleteBookById(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
@@ -180,6 +103,5 @@ public class BookController {
 		}
 		return new ResponseEntity<>(books, HttpStatus.OK);
 	}
-	
 	
 }
