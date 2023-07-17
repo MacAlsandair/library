@@ -22,65 +22,36 @@ public class BookRecommendationController {
 
 	@Autowired
 	private BookRecommendationService bookRecommendationService;
-	@Autowired
-	private UserRepository userRepository;
-	@Autowired
-	private BookRepository bookRepository;
 
 	@PostMapping("/add/{id}")
 	public ResponseEntity<String> addFavoriteBook(@PathVariable("id") Long id) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Optional<User> user = userRepository.findByUsername(username);
-		Optional<Book> book = bookRepository.findById(id);
-
-		if (book.isPresent() && !user.get().isFavoriteBook(book.get())) {
-			user.get().addFavoriteBook(book.get());
-			userRepository.save(user.get());
-			return new ResponseEntity<>("Book added to favorites successfully", HttpStatus.OK);
-		} else if (!book.isPresent()) {
-			return new ResponseEntity<>("No book found with provided ID", HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<>("Book already in favorites", HttpStatus.CONFLICT);
-		}
+		User user = bookRecommendationService.findUserByUsername(username);
+		String response = bookRecommendationService.addFavoriteBook(id, user);
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/remove/{id}")
 	public ResponseEntity<String> deleteFavoriteBook(@PathVariable("id") Long id) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		Optional<User> user = userRepository.findByUsername(username);
-		Optional<Book> book = bookRepository.findById(id);
+		User user = bookRecommendationService.findUserByUsername(username);
+		String response = bookRecommendationService.deleteFavoriteBook(id, user);
+		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
 
-		if (book.isPresent() && user.get().isFavoriteBook(book.get())) {
-			user.get().removeFavoriteBook(book.get());
-			userRepository.save(user.get());
-			return new ResponseEntity<>("Book removed from favorites successfully", HttpStatus.OK);
-		} else if (!book.isPresent()) {
-			return new ResponseEntity<>("No book found with provided ID", HttpStatus.BAD_REQUEST);
-		} else {
-			return new ResponseEntity<>("Book not found in favorites", HttpStatus.CONFLICT);
-		}
+	@GetMapping("/checkFavorite/{id}")
+	public ResponseEntity<Boolean> checkFavoriteBook(@PathVariable("id") Long id) {
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = bookRecommendationService.findUserByUsername(username);
+		boolean isFavorite = bookRecommendationService.checkFavoriteBook(id, user);
+		HttpStatus status = isFavorite ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+		return new ResponseEntity<>(isFavorite, status);
 	}
 
 	@GetMapping("/personal")
 	public Set<Book> sendPersonalRecommendations() {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		Optional<User> user = userRepository.findByUsername(auth.getName());
-		return bookRecommendationService.recommendBooks(user.get());
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		User user = bookRecommendationService.findUserByUsername(username);
+		return bookRecommendationService.recommendBooks(user);
 	}
-	
-	@GetMapping("/checkFavorite/{id}")
-	public ResponseEntity<Boolean> checkFavoriteBook(@PathVariable("id") Long id) {
-	  String username = SecurityContextHolder.getContext().getAuthentication().getName();
-	  Optional<User> user = userRepository.findByUsername(username);
-	  Optional<Book> book = bookRepository.findById(id);
-
-	  if (book.isPresent() && user.get().isFavoriteBook(book.get())) {
-	    return new ResponseEntity<>(true, HttpStatus.OK);
-	  } else if (!book.isPresent()) {
-	    return new ResponseEntity<>(false, HttpStatus.BAD_REQUEST);
-	  } else {
-	    return new ResponseEntity<>(false, HttpStatus.OK);
-	  }
-	}
-
 }
