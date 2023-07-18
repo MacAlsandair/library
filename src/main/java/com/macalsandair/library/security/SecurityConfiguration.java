@@ -19,7 +19,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.util.AntPathMatcher;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.macalsandair.library.user.Role;
@@ -32,6 +34,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
+import jakarta.servlet.Filter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -55,7 +58,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenAuthenticationEntryPoint;
 import org.springframework.security.oauth2.server.resource.web.access.BearerTokenAccessDeniedHandler;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+//import com.auth.core.security.JwtAuthenticationFilter;
 
 @EnableWebSecurity
 @Configuration
@@ -64,6 +69,9 @@ public class SecurityConfiguration {
 	
 	private final RSAPublicKey key;
 	private final RSAPrivateKey priv;
+	
+	@Autowired
+	private UserRepository userRepository;
 	
     public SecurityConfiguration(
             @Value("${jwt.public.key}") RSAPublicKey key,
@@ -95,7 +103,7 @@ public class SecurityConfiguration {
 					.accessDeniedHandler(new BearerTokenAccessDeniedHandler())
 					)
 			.cors(Customizer.withDefaults())
-			.addFilterBefore(new UserExistsFilter(), JwtAuthenticationFilter.class);
+			.addFilterAfter(new UserExistsFilter(key, userRepository), BearerTokenAuthenticationFilter.class);
 		return http.build();
 	}
 
