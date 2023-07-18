@@ -99,6 +99,33 @@ public class CommentToBookServiceTest {
             commentToBookService.updateComment(1L, "New Comment");
         });
     }
+    
+    @Test
+    public void deleteComment_success(){
+        //Setup data
+        CommentToBook comment = new CommentToBook();
+        comment.setId(1L);
+
+        //Setup mocks
+        //when(commentToBookRepository.findById(1L)).thenReturn(Optional.of(comment));
+        doNothing().when(commentToBookRepository).deleteById(1L);
+
+        commentToBookService.deleteComment(1L);
+
+        //Assertion
+        verify(commentToBookRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    public void deleteComment_notFound(){
+        //Setup mocks
+        when(commentToBookRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> {
+            commentToBookService.deleteComment(1L);
+        });
+    }
+
 
     
     
