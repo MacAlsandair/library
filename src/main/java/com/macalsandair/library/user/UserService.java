@@ -38,7 +38,6 @@ public class UserService {
         return "User Registered Successfully!";
     }
 
-    //@PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String registerNewAdmin(UserRegistrationDTO registration) {
         String username = registration.getUsername();
         Optional<User> optUser = userRepository.findByUsername(username);

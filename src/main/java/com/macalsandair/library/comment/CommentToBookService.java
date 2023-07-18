@@ -48,7 +48,13 @@ public class CommentToBookService {
     }
 
     public void deleteComment(Long id) {
-        commentToBookRepository.deleteById(id);
+    	if (commentToBookRepository.findById(id).isPresent()) {
+            commentToBookRepository.deleteById(id);
+    	}
+    	else {
+    		throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Comment not found: " + id);
+    	}
     }
 
     public List<CommentToBook> findByAuthor(Long authorId) {
