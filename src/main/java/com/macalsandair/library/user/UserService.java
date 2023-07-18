@@ -56,27 +56,39 @@ public class UserService {
     }
 
     public String changePassword(PasswordChangeDTO passwordChange, String username) {
-        User user = userRepository.findByUsername(username).get();
-        if(passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())){
-            if(!passwordChange.getNewPassword().equals(passwordChange.getOldPassword())){
-                String encryptedPassword = passwordEncoder.encode(passwordChange.getNewPassword());
-                user.setPassword(encryptedPassword);
-                userRepository.save(user);
-                return "Password Changed Successfully!";
+    	if (userRepository.findByUsername(username).isPresent()) {
+            User user = userRepository.findByUsername(username).get();
+            if(passwordEncoder.matches(passwordChange.getOldPassword(), user.getPassword())){
+                if(!passwordChange.getNewPassword().equals(passwordChange.getOldPassword())){
+                    String encryptedPassword = passwordEncoder.encode(passwordChange.getNewPassword());
+                    user.setPassword(encryptedPassword);
+                    userRepository.save(user);
+                    return "Password Changed Successfully!";
+                } else {
+                    throw new ResponseStatusException(
+                      HttpStatus.BAD_REQUEST, "New Password is the same as the old one!");
+                }
             } else {
                 throw new ResponseStatusException(
-                  HttpStatus.BAD_REQUEST, "New Password is the same as the old one!");
+                  HttpStatus.BAD_REQUEST, "Invalid Old Password!");
             }
-        } else {
+    	}
+    	else {
             throw new ResponseStatusException(
-              HttpStatus.BAD_REQUEST, "Invalid Old Password!");
-        }
+                    HttpStatus.BAD_REQUEST, "Username not found");
+    	}
     }
 
     public String deleteUser(String username) {
-        User user = userRepository.findByUsername(username).get();
-        userRepository.delete(user);
-        return "User Deleted Successfully!";
+    	if (userRepository.findByUsername(username).isPresent()) {
+            User user = userRepository.findByUsername(username).get();
+            userRepository.delete(user);
+            return "User Deleted Successfully!";
+    	}
+    	else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Username not found");
+    	}
     }
 }
 
