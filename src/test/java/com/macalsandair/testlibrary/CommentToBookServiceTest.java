@@ -72,7 +72,33 @@ public class CommentToBookServiceTest {
         });
     }
     
-    
+    @Test
+    public void updateComment_success(){
+        //Setup data
+        CommentToBook comment = new CommentToBook();
+        comment.setId(1L);
+        comment.setCommentText("Old Comment");
+
+        //Setup mocks
+        when(commentToBookRepository.findById(1L)).thenReturn(Optional.of(comment));
+        when(commentToBookRepository.save(any(CommentToBook.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        CommentToBook updatedComment = commentToBookService.updateComment(1L, "New Comment");
+
+        //Assertion
+        assertNotNull(updatedComment);
+        assertEquals("New Comment", updatedComment.getCommentText());
+    }
+
+    @Test
+    public void updateComment_notFound(){
+        //Setup mocks
+        when(commentToBookRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(ResponseStatusException.class, () -> {
+            commentToBookService.updateComment(1L, "New Comment");
+        });
+    }
 
     
     

@@ -94,4 +94,8 @@ public class CommentToBook {
 	public void setTimeStamp(LocalDateTime timeStamp) {
 		this.timeStamp = timeStamp;
 	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
 }
