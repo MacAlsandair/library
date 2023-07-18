@@ -45,8 +45,8 @@ public class BookRecommendationController {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
 		User user = bookRecommendationService.findUserByUsername(username);
 		boolean isFavorite = bookRecommendationService.checkFavoriteBook(id, user);
-		HttpStatus status = isFavorite ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-		return new ResponseEntity<>(isFavorite, status);
+		//HttpStatus status = isFavorite ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+		return new ResponseEntity<>(isFavorite, HttpStatus.OK);
 	}
 
 	@GetMapping("/personal")
