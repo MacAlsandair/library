@@ -1,4 +1,4 @@
-package com.macalsandair.library.user;
+package com.macalsandair.library.recommendation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,6 +7,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.macalsandair.library.book.Book;
 import com.macalsandair.library.book.BookRepository;
+import com.macalsandair.library.user.User;
+import com.macalsandair.library.user.UserFavoriteBook;
+import com.macalsandair.library.user.UserRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;

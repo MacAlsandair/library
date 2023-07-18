@@ -1,4 +1,4 @@
-package com.macalsandair.library.auth;
+package com.macalsandair.library.user;
 
 
 public enum Permission {

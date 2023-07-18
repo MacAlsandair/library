@@ -1,10 +1,11 @@
-package com.macalsandair.library.user;
+package com.macalsandair.library.recommendation;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.macalsandair.library.book.Book;
 import com.macalsandair.library.book.BookRepository;
+import com.macalsandair.library.user.User;
 
 import java.util.Optional;
 import java.util.Set;

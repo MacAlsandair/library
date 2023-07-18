@@ -1,4 +1,4 @@
-package com.macalsandair.library.auth;
+package com.macalsandair.library.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
