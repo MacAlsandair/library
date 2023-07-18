@@ -71,7 +71,7 @@ public class SecurityConfiguration {
 	private final RSAPrivateKey priv;
 	
 	@Autowired
-	private UserRepository userRepository;
+	private UserExistsFilter userExistsFilter;
 	
     public SecurityConfiguration(
             @Value("${jwt.public.key}") RSAPublicKey key,
@@ -103,7 +103,7 @@ public class SecurityConfiguration {
 					.accessDeniedHandler(new BearerTokenAccessDeniedHandler())
 					)
 			.cors(Customizer.withDefaults())
-			.addFilterAfter(new UserExistsFilter(key, userRepository), BearerTokenAuthenticationFilter.class);
+			.addFilterAfter(userExistsFilter, BearerTokenAuthenticationFilter.class);
 		return http.build();
 	}
 

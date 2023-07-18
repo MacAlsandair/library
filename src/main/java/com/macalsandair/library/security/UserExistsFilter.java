@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,20 +24,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.Ordered;
 
-
+@Component
 public class UserExistsFilter extends OncePerRequestFilter {
 
-    //@Autowired
+    @Autowired
     private UserRepository userRepository;
     
-	private final RSAPublicKey key;
+    @Value("${jwt.public.key}")
+	private RSAPublicKey key;
 	
-    public UserExistsFilter(
-           RSAPublicKey key, UserRepository userRepository
-        ) {
-            this.key = key;
-            this.userRepository = userRepository;
-        }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
