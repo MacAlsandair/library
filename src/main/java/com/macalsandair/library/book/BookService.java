@@ -48,7 +48,7 @@ public class BookService {
         try {
             savedBook = uploadImageAndSaveBook(book, imageFile);
         } catch (IOException e) {
-            // handle exception
+        	throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Cannot add image");
         }
         return savedBook;
     }
@@ -58,7 +58,7 @@ public class BookService {
 		try {
 			updatedBook = uploadImageAndSaveBook(book, imageFile);
 		} catch (IOException e) {
-			// handle exception
+        	throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Cannot update image");
 		}
 		return updatedBook;
     }
@@ -74,7 +74,7 @@ public class BookService {
 		try {
 			existingBook = uploadImageAndSaveBook(existingBook, imageFile);
 		} catch (IOException e) {
-			// handle exception
+        	throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, "Cannot update image");
 		}
         
 		return existingBook;
