@@ -2,6 +2,8 @@ package com.macalsandair.testlibrary;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -20,6 +22,9 @@ import com.macalsandair.library.comment.CommentToBookService;
 import com.macalsandair.library.user.User;
 import com.macalsandair.library.user.UserRepository;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -107,7 +112,7 @@ public class CommentToBookServiceTest {
         comment.setId(1L);
 
         //Setup mocks
-        //when(commentToBookRepository.findById(1L)).thenReturn(Optional.of(comment));
+        when(commentToBookRepository.findById(1L)).thenReturn(Optional.of(comment));
         doNothing().when(commentToBookRepository).deleteById(1L);
 
         commentToBookService.deleteComment(1L);
@@ -127,7 +132,51 @@ public class CommentToBookServiceTest {
     }
 
 
-    
+    @ParameterizedTest
+    @ValueSource(longs = {1L, 2L, 3L}) // Change to provide Author Ids since findByAuthor method in service uses Ids
+    public void findByAuthor_success(Long authorId){
+        // Create necessary objects for testing
+        User author = new User();
+        author.setId(authorId);
+        author.setUsername("username");
+        Book book = new Book();
+        book.setName("BookTitle");
+        CommentToBook comment = new CommentToBook(author, book, "CommentText");
+
+        //Correct the mocking
+        when(userRepository.findById(authorId)).thenReturn(Optional.of(author));
+        when(commentToBookRepository.findByAuthor(author)).thenReturn(Arrays.asList(comment));
+
+        List<CommentToBook> returnedComments = commentToBookService.findByAuthor(authorId);
+
+        assertNotNull(returnedComments);
+        assertEquals(1, returnedComments.size());
+        assertEquals(authorId, returnedComments.get(0).getAuthor().getId());
+    }
+
+    @ParameterizedTest
+    @ValueSource(longs = {1L, 2L, 3L})
+    public void findByBook_success(Long bookId){
+        User author = new User();
+        author.setUsername("username");
+        Book book = new Book();
+        book.setName("BookTitle");
+        book.setId(bookId);
+        CommentToBook comment = new CommentToBook(author, book, "CommentText");
+
+        // Mock findById to return a book
+        when(bookRepository.findById(bookId)).thenReturn(Optional.of(book));
+        // Mock findByBook to return a list of comments 
+        when(commentToBookRepository.findByBook(book)).thenReturn(Collections.singletonList(comment));
+
+        List<CommentToBook> returnedComments = commentToBookService.findByBook(bookId);
+
+        assertNotNull(returnedComments);
+        assertEquals(1, returnedComments.size());
+        assertEquals(bookId, returnedComments.get(0).getBook().getId());
+    }
+
+
     
 }
 
