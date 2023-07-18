@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.macalsandair.library.auth.Role;
+import com.macalsandair.library.user.Role;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.transaction.Transactional;

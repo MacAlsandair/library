@@ -1,4 +1,4 @@
-package com.macalsandair.library.configuration;
+package com.macalsandair.library.security;
 
 import java.util.Arrays;
 import java.util.Collection;

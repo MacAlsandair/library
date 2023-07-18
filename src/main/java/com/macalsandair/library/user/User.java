@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.macalsandair.library.auth.Role;
 import com.macalsandair.library.book.Book;
 import com.macalsandair.library.comment.CommentToBook;
 

@@ -1,4 +1,4 @@
-package com.macalsandair.library.configuration;
+package com.macalsandair.library.security;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
@@ -22,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.macalsandair.library.auth.Role;
+import com.macalsandair.library.user.Role;
 import com.macalsandair.library.user.UserDetailsServiceImpl;
 import com.macalsandair.library.user.UserRepository;
 import com.nimbusds.jose.jwk.JWK;

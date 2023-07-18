@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.macalsandair.library.auth.PasswordChangeDTO;
-import com.macalsandair.library.auth.Role;
 import com.macalsandair.library.auth.UserRegistrationDTO;
 
 @Service
