@@ -34,6 +34,7 @@ public class CommentToBookService {
         comment.setAuthor(author);
         comment.setBook(book);
         comment.setCommentText(commentText);
+        comment.setTimeStamp(LocalDateTime.now());
         return commentToBookRepository.save(comment);
     }
 
