@@ -94,7 +94,8 @@ public class SecurityConfiguration {
 					.authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
 					.accessDeniedHandler(new BearerTokenAccessDeniedHandler())
 					)
-			.cors(Customizer.withDefaults());
+			.cors(Customizer.withDefaults())
+			.addFilterBefore(new UserExistsFilter(), JwtAuthenticationFilter.class);
 		return http.build();
 	}
 
