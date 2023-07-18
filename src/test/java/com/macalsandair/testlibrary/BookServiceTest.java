@@ -128,6 +128,83 @@ public class BookServiceTest {
         assertThrows(ResponseStatusException.class, () -> bookService.addBookWithImage(book, imageFile));
     }
 
-    // Add tests for other methods in the BookService class
+    
+    @Test
+    void whenSearchBookWithValidText_thenReturnListOfBooks() {
+        // Arrange
+        String searchText = "Book1";
+        List<Book> expectedBooks = new ArrayList<>();
+        expectedBooks.add(new Book("Book1", "Author1", (short) 2000, "Genre1"));
+        when(bookRepository.findByNameContainingIgnoreCaseOrAuthorContainingIgnoreCase(searchText, searchText)).thenReturn(expectedBooks);
+
+        // Act
+        List<Book> result = bookService.searchBook(searchText);
+
+        // Assert
+        assertEquals(expectedBooks, result);
+    }
+
+    @Test
+    void whenFindBookByIdWithValidId_thenReturnBook() {
+        // Arrange
+        Long id = 1L;
+        Book expectedBook = new Book("Book1", "Author1", (short) 2000, "Genre1");
+        when(bookRepository.findById(id)).thenReturn(Optional.of(expectedBook));
+
+        // Act
+        Book result = bookService.findBookById(id);
+
+        // Assert
+        assertEquals(expectedBook, result);
+    }
+
+    @Test
+    void whenFindBookByIdWithInvalidId_thenThrowException() {
+        // Arrange
+        Long id = 999L;
+        when(bookRepository.findById(id)).thenReturn(Optional.empty());
+
+        // Act and Assert
+        assertThrows(ResponseStatusException.class, () -> bookService.findBookById(id));
+    }
+
+    @Test
+    void whenUpdateBookWithValidBook_thenReturnUpdatedBook() {
+        // Arrange
+        Book originalBook = new Book("Book1", "Author1", (short) 2000, "Genre1");
+        Book updatedBook = new Book("Book1 Updated", "Author1 Updated", (short) 2001, "Genre1 Updated");
+        when(bookRepository.save(any(Book.class))).thenReturn(updatedBook);
+
+        // Act
+        Book result = bookService.updateBook(originalBook);
+
+        // Assert
+        assertEquals(updatedBook, result);
+    }
+
+    @Test
+    void whenDeleteBookByIdWithValidId_thenBookIsDeleted() {
+        // Arrange
+        Long id = 1L;
+        when(bookRepository.existsById(id)).thenReturn(true);
+
+        // Act
+        assertDoesNotThrow(() -> bookService.deleteBookById(id));
+
+        // Assert
+        // Verify that the deleteById method was called in the repository
+        verify(bookRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void whenDeleteBookByIdWithInvalidId_thenThrowException() {
+        // Arrange
+        Long id = 999L;
+        when(bookRepository.existsById(id)).thenReturn(false);
+
+        // Act and Assert
+        assertThrows(ResponseStatusException.class, () -> bookService.deleteBookById(id));
+    }
+    
 
 }
