@@ -16,9 +16,13 @@ import com.macalsandair.library.book.Book;
 import com.macalsandair.library.book.BookRepository;
 import com.macalsandair.library.book.BookService;
 
+import jakarta.persistence.Convert;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -126,6 +130,89 @@ public class BookServiceTest {
 
         // Act and Assert
         assertThrows(ResponseStatusException.class, () -> bookService.addBookWithImage(book, imageFile));
+    }
+    
+    @Test
+    void whenConvertMultipartFileToValidFile_thenFileIsConverted() throws IOException {
+        // Arrange
+        byte[] fileContent = {1, 2, 3};
+        MockMultipartFile multipartFile = new MockMultipartFile("test.txt", "test.txt", "text/plain", fileContent);
+        BookService bookService = new BookService();
+        
+        Method method;
+		try {
+			method = BookService.class.getDeclaredMethod("convert", MultipartFile.class);
+	        method.setAccessible(true);
+	        // Act
+	        File result;
+			try {
+				result = (File) method.invoke(bookService, multipartFile);
+		        // Assert
+		        assertTrue(result.exists());
+		        assertEquals("test.txt", result.getName());
+		        assertEquals(fileContent.length, result.length());
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+//        method.invoke(bookService, multipartFile);
+
+
+    }
+
+    @Test
+    void whenConvertEmptyMultipartFile_thenFileIsEmpty() throws IOException {
+        // Arrange
+        byte[] fileContent = {};
+        MockMultipartFile multipartFile = new MockMultipartFile("empty.txt", "empty.txt", "text/plain", fileContent);
+        BookService bookService = new BookService();
+        
+        Method method;
+		try {
+			method = BookService.class.getDeclaredMethod("convert", MultipartFile.class);
+	        method.setAccessible(true);
+	        // Act
+	        File result;
+			try {
+				result = (File) method.invoke(bookService, multipartFile);
+		        // Assert
+		        assertTrue(result.exists());
+		        assertEquals("empty.txt", result.getName());
+		        assertEquals(fileContent.length, result.length());
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
     }
 
     
